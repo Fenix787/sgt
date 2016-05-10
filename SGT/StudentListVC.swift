@@ -1,17 +1,17 @@
 //
-//  MasterViewController.swift
+//  StudentListVC.swift
 //  SGT
 //
-//  Created by Kevin Clarke on 5/8/16.
+//  Created by Kevin Clarke on 4/8/16.
 //  Copyright © 2016 Northern illinois University. All rights reserved.
 //
 
 import UIKit
 import CoreData
 
-class MasterViewController: UITableViewController, NSFetchedResultsControllerDelegate {
+class StudentListVC: UITableViewController, NSFetchedResultsControllerDelegate {
 
-    var detailViewController: DetailViewController? = nil
+    var detailViewController: StudentVC? = nil
     var managedObjectContext: NSManagedObjectContext? = nil
 
 
@@ -24,8 +24,14 @@ class MasterViewController: UITableViewController, NSFetchedResultsControllerDel
         self.navigationItem.rightBarButtonItem = addButton
         if let split = self.splitViewController {
             let controllers = split.viewControllers
-            self.detailViewController = (controllers[controllers.count-1] as! UINavigationController).topViewController as? DetailViewController
+            self.detailViewController = (controllers[controllers.count-1] as! UINavigationController).topViewController as? StudentVC
         }
+        
+        // if there is at least one student send that to the detailview
+        if  (self.fetchedResultsController.sections![0].numberOfObjects > 0){
+            detailViewController?.detailItem = self.fetchedResultsController.objectAtIndexPath(NSIndexPath(forItem: 0, inSection: 0))
+        }
+        
     }
 
     override func viewWillAppear(animated: Bool) {
@@ -39,38 +45,73 @@ class MasterViewController: UITableViewController, NSFetchedResultsControllerDel
     }
 
     func insertNewObject(sender: AnyObject) {
-        let context = self.fetchedResultsController.managedObjectContext
-        let entity = self.fetchedResultsController.fetchRequest.entity!
-        let newManagedObject = NSEntityDescription.insertNewObjectForEntityForName(entity.name!, inManagedObjectContext: context)
-             
-        // If appropriate, configure the new managed object.
-        // Normally you should use accessor methods, but using KVC here avoids the need to add a custom class to the template.
-        newManagedObject.setValue(NSDate(), forKey: "timeStamp")
-             
-        // Save the context.
-        do {
-            try context.save()
-        } catch {
-            // Replace this implementation with code to handle the error appropriately.
-            // abort() causes the application to generate a crash log and terminate. You should not use this function in a shipping application, although it may be useful during development.
-            //print("Unresolved error \(error), \(error.userInfo)")
-            abort()
+        // alert view
+        let alertController = UIAlertController(
+            title: "New Student",
+            message: "Please enter the student's name.",
+            preferredStyle: UIAlertControllerStyle.Alert)
+        
+        alertController.addTextFieldWithConfigurationHandler {
+            (fname) -> Void in
+            fname.placeholder = "First Name"
         }
+        
+        alertController.addTextFieldWithConfigurationHandler {
+            (lname) -> Void in
+            lname.placeholder = "Last Name"
+        }
+        
+        let okAction = UIAlertAction(
+        title: "OK", style: UIAlertActionStyle.Default) {
+            (action) -> Void in
+            let context = self.fetchedResultsController.managedObjectContext
+            let entity = self.fetchedResultsController.fetchRequest.entity!
+            let newManagedObject = NSEntityDescription.insertNewObjectForEntityForName(entity.name!, inManagedObjectContext: context)
+            newManagedObject.setValue(alertController.textFields?[0].text, forKey: "firstName")
+            newManagedObject.setValue(alertController.textFields?[1].text, forKey: "lastName")
+            
+            // Save the context.
+            do {
+                try context.save()
+            } catch {
+                // Replace this implementation with code to handle the error appropriately.
+                // abort() causes the application to generate a crash log and terminate. You should not use this function in a shipping application, although it may be useful during development.
+                //print("Unresolved error \(error), \(error.userInfo)")
+                abort()
+            }
+        }
+        
+        let cancelAction = UIAlertAction(title: "Cancel", style: UIAlertActionStyle.Cancel) { (action) -> Void in}
+        
+        // Display alert view
+        alertController.addAction(okAction)
+        alertController.addAction(cancelAction)
+        self.presentViewController(alertController, animated: true, completion: nil)
     }
 
     // MARK: - Segues
+    
+    // Removed the segue in the story board, this function is no longer necessary.
+    // The showDetail segue was causing the left navigation bar button to disappear.
+    // As the target for this application is currently only iPad it is not an issue.
+    // If future support for smaller devices is added the segue will need to be used
+    // and a solution for the delete button disapeparing needs to be found
+    
+    //****************************************************************************//
 
     override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
         if segue.identifier == "showDetail" {
             if let indexPath = self.tableView.indexPathForSelectedRow {
             let object = self.fetchedResultsController.objectAtIndexPath(indexPath)
-                let controller = (segue.destinationViewController as! UINavigationController).topViewController as! DetailViewController
+                let controller = (segue.destinationViewController as! UINavigationController).topViewController as! StudentVC
                 controller.detailItem = object
                 controller.navigationItem.leftBarButtonItem = self.splitViewController?.displayModeButtonItem()
                 controller.navigationItem.leftItemsSupplementBackButton = true
             }
         }
     }
+    
+    //****************************************************************************//
 
     // MARK: - Table View
 
@@ -84,7 +125,7 @@ class MasterViewController: UITableViewController, NSFetchedResultsControllerDel
     }
 
     override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCellWithIdentifier("Cell", forIndexPath: indexPath)
+        let cell = tableView.dequeueReusableCellWithIdentifier("studentListCell", forIndexPath: indexPath)
         let object = self.fetchedResultsController.objectAtIndexPath(indexPath) as! NSManagedObject
         self.configureCell(cell, withObject: object)
         return cell
@@ -94,25 +135,59 @@ class MasterViewController: UITableViewController, NSFetchedResultsControllerDel
         // Return false if you do not want the specified item to be editable.
         return true
     }
+    
+    override func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
+        //CODE TO BE RUN ON CELL TOUCH
+        detailViewController?.detailItem = self.fetchedResultsController.objectAtIndexPath(indexPath)
+    }
 
     override func tableView(tableView: UITableView, commitEditingStyle editingStyle: UITableViewCellEditingStyle, forRowAtIndexPath indexPath: NSIndexPath) {
         if editingStyle == .Delete {
             let context = self.fetchedResultsController.managedObjectContext
-            context.deleteObject(self.fetchedResultsController.objectAtIndexPath(indexPath) as! NSManagedObject)
+            
+            let goalRequest = NSFetchRequest(entityName: "Goal")
+            goalRequest.includesSubentities = false
+            goalRequest.returnsObjectsAsFaults = false
+            
+            let pred = NSPredicate(format: "(goalFor= %@)", self.fetchedResultsController.objectAtIndexPath(indexPath) as! NSManagedObject)
+            goalRequest.predicate = pred
+            do {
+                let studentGoals = try managedObjectContext!.executeFetchRequest(goalRequest)
                 
+                for goal in studentGoals {
+                    let goalDataRequest = NSFetchRequest(entityName: "GoalData")
+                    goalDataRequest.includesSubentities = false
+                    goalDataRequest.returnsObjectsAsFaults = false
+                    let pred = NSPredicate(format: "(dataFor= %@)", goal as! NSManagedObject)
+                    goalDataRequest.predicate = pred
+                    do {
+                        let studentGoalData = try managedObjectContext!.executeFetchRequest(goalDataRequest)
+                        
+                        for goalData in studentGoalData {
+                            managedObjectContext!.deleteObject(goalData as! NSManagedObject)
+                        }
+                        
+                    } catch {
+                        print("error removing goal data")
+                    }
+                    managedObjectContext!.deleteObject(goal as! NSManagedObject)
+                }
+            } catch {
+                print("error removing goals")
+            }
+            context.deleteObject(self.fetchedResultsController.objectAtIndexPath(indexPath) as! NSManagedObject)
             do {
                 try context.save()
             } catch {
                 // Replace this implementation with code to handle the error appropriately.
                 // abort() causes the application to generate a crash log and terminate. You should not use this function in a shipping application, although it may be useful during development.
-                //print("Unresolved error \(error), \(error.userInfo)")
-                abort()
+                print("errror saving deletions")
             }
         }
     }
 
     func configureCell(cell: UITableViewCell, withObject object: NSManagedObject) {
-        cell.textLabel!.text = object.valueForKey("timeStamp")!.description
+        cell.textLabel!.text = object.valueForKey("firstName")!.description + " " + object.valueForKey("lastName")!.description
     }
 
     // MARK: - Fetched results controller
@@ -124,14 +199,14 @@ class MasterViewController: UITableViewController, NSFetchedResultsControllerDel
         
         let fetchRequest = NSFetchRequest()
         // Edit the entity name as appropriate.
-        let entity = NSEntityDescription.entityForName("Event", inManagedObjectContext: self.managedObjectContext!)
+        let entity = NSEntityDescription.entityForName("Student", inManagedObjectContext: self.managedObjectContext!)
         fetchRequest.entity = entity
         
         // Set the batch size to a suitable number.
         fetchRequest.fetchBatchSize = 20
         
         // Edit the sort key as appropriate.
-        let sortDescriptor = NSSortDescriptor(key: "timeStamp", ascending: false)
+        let sortDescriptor = NSSortDescriptor(key: "lastName", ascending: false)
         
         fetchRequest.sortDescriptors = [sortDescriptor]
         
