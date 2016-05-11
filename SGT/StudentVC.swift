@@ -36,6 +36,7 @@ class StudentVC: UIViewController, NSFetchedResultsControllerDelegate, ChartView
     var rightNewBarButtonItem:UIBarButtonItem = UIBarButtonItem()
     var rightLogSessionBarButtonItem:UIBarButtonItem = UIBarButtonItem()
     var leftDeleteBarButtonItem:UIBarButtonItem = UIBarButtonItem()
+    var leftAboutBarButtonItem:UIBarButtonItem = UIBarButtonItem()
     
     let managedObjectContext = (UIApplication.sharedApplication().delegate as! AppDelegate).managedObjectContext
     let appDelegate = UIApplication.sharedApplication().delegate as! AppDelegate
@@ -59,7 +60,7 @@ class StudentVC: UIViewController, NSFetchedResultsControllerDelegate, ChartView
             _ = self.view
             
             self.navigationItem.setRightBarButtonItems([rightNewBarButtonItem], animated: true)
-            self.navigationItem.setLeftBarButtonItems(nil, animated: true)
+            self.navigationItem.setLeftBarButtonItems([leftAboutBarButtonItem], animated: true)
             goalDescriptionLabel.text = ""
             goalChart.delegate = self
             
@@ -80,9 +81,8 @@ class StudentVC: UIViewController, NSFetchedResultsControllerDelegate, ChartView
                 segmentedGoal.selectedSegmentIndex = 0
                 goalDescriptionLabel.text = goals[0].valueForKey("about")! as? String
                 populateGraphData(goals[0])
-                self.navigationItem.setLeftBarButtonItems([leftDeleteBarButtonItem], animated: true)
+                self.navigationItem.setLeftBarButtonItems([leftDeleteBarButtonItem,leftAboutBarButtonItem], animated: true)
                 self.navigationItem.setRightBarButtonItems([rightNewBarButtonItem,rightLogSessionBarButtonItem], animated: true)
-                print(self.navigationItem.leftBarButtonItems)
             }
         }
     }
@@ -98,6 +98,7 @@ class StudentVC: UIViewController, NSFetchedResultsControllerDelegate, ChartView
         rightNewBarButtonItem = UIBarButtonItem(barButtonSystemItem: .Add, target: self, action: #selector(newGoal))
         rightLogSessionBarButtonItem = UIBarButtonItem(title: "Log Session", style: UIBarButtonItemStyle.Plain, target: self, action: #selector(logSession))
         leftDeleteBarButtonItem = UIBarButtonItem(barButtonSystemItem: .Stop, target: self, action: #selector(deleteGoal))
+        leftAboutBarButtonItem = UIBarButtonItem(title: "Help", style: UIBarButtonItemStyle.Plain, target: self, action: #selector(displayAbout))
         
         self.configureView()
     }
@@ -217,6 +218,10 @@ class StudentVC: UIViewController, NSFetchedResultsControllerDelegate, ChartView
     
     func logSession() {
         self.performSegueWithIdentifier("logSession", sender: self)
+    }
+    
+    func displayAbout() {
+        self.performSegueWithIdentifier("displayAbout", sender: self)
     }
     
     func newGoal() {

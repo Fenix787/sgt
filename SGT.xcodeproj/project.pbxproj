@@ -14,6 +14,7 @@
 		0A8E82141CE137EC00582E02 /* Goal+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A8E820E1CE137EC00582E02 /* Goal+CoreDataProperties.swift */; };
 		0A8E82151CE137EC00582E02 /* Goal.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A8E820F1CE137EC00582E02 /* Goal.swift */; };
 		0A8E82171CE24FF500582E02 /* teamPic116031-24608-1nfqp1l.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 0A8E82161CE24FF500582E02 /* teamPic116031-24608-1nfqp1l.jpg */; };
+		0A8E821A1CE358AD00582E02 /* AboutVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A8E82191CE358AD00582E02 /* AboutVC.swift */; };
 		0AB935211CE0068300CD4716 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AB935201CE0068300CD4716 /* AppDelegate.swift */; };
 		0AB935241CE0068300CD4716 /* SGT.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 0AB935221CE0068300CD4716 /* SGT.xcdatamodeld */; };
 		0AB9352B1CE0068300CD4716 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 0AB935291CE0068300CD4716 /* Main.storyboard */; };
@@ -86,6 +87,7 @@
 		0A8E820E1CE137EC00582E02 /* Goal+CoreDataProperties.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Goal+CoreDataProperties.swift"; sourceTree = "<group>"; };
 		0A8E820F1CE137EC00582E02 /* Goal.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Goal.swift; sourceTree = "<group>"; };
 		0A8E82161CE24FF500582E02 /* teamPic116031-24608-1nfqp1l.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; name = "teamPic116031-24608-1nfqp1l.jpg"; path = "../../teamPic116031-24608-1nfqp1l.jpg"; sourceTree = "<group>"; };
+		0A8E82191CE358AD00582E02 /* AboutVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AboutVC.swift; sourceTree = "<group>"; };
 		0AB9351D1CE0068300CD4716 /* SGT.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SGT.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		0AB935201CE0068300CD4716 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		0AB935231CE0068300CD4716 /* SGT.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = SGT.xcdatamodel; sourceTree = "<group>"; };
@@ -155,6 +157,7 @@
 				0AB935221CE0068300CD4716 /* SGT.xcdatamodeld */,
 				0AB935541CE03EF600CD4716 /* LogSessionVC.swift */,
 				0A8E82161CE24FF500582E02 /* teamPic116031-24608-1nfqp1l.jpg */,
+				0A8E82191CE358AD00582E02 /* AboutVC.swift */,
 			);
 			path = SGT;
 			sourceTree = "<group>";
@@ -289,6 +292,7 @@
 				0AB935211CE0068300CD4716 /* AppDelegate.swift in Sources */,
 				0A8E82151CE137EC00582E02 /* Goal.swift in Sources */,
 				0A8E82121CE137EC00582E02 /* GoalData+CoreDataProperties.swift in Sources */,
+				0A8E821A1CE358AD00582E02 /* AboutVC.swift in Sources */,
 				0AB9353A1CE0069100CD4716 /* StudentVC.swift in Sources */,
 				0A8E82111CE137EC00582E02 /* Student.swift in Sources */,
 				0AB935381CE0068A00CD4716 /* StudentListVC.swift in Sources */,
