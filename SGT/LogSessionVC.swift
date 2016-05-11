@@ -54,22 +54,12 @@ class LogSessionVC: UIViewController, NSFetchedResultsControllerDelegate, UITabl
     @IBOutlet weak var datePicker: UIDatePicker!
     
     @IBAction func saveButtonPressed(sender: AnyObject) {
-        // save goal data
-        var goalDataIndex = NSIndexPath(forRow: 0, inSection: 0)
-        for goal in goals {
-            let cell = self.goalTableView.cellForRowAtIndexPath(goalDataIndex) as! logSessionGoalCell
-            saveGoalData(datePicker.date,goal: goal,value: cell.goalSlider.value)
-            goalDataIndex = NSIndexPath(forRow:goalDataIndex.row+1, inSection:goalDataIndex.section)
-        }
-        // update graph view
-        NSNotificationCenter.defaultCenter().postNotificationName("updateGraphView", object: nil)
-        // dismiss view
-        self.dismissViewControllerAnimated(true, completion: {});
+        saveSession()
     }
     
     @IBAction func cancelButtonPressed(sender: AnyObject) {
         // dismiss view
-        self.dismissViewControllerAnimated(true, completion: {});
+        self.navigationController!.popViewControllerAnimated(true)
     }
     
     let managedObjectContext = (UIApplication.sharedApplication().delegate as! AppDelegate).managedObjectContext
@@ -103,10 +93,11 @@ class LogSessionVC: UIViewController, NSFetchedResultsControllerDelegate, UITabl
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view, typically from a nib.
-        //self.configureView()
         
         // load view
         _ = self.view
+        
+        self.navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Save", style: UIBarButtonItemStyle.Plain, target: self, action: #selector(saveSession))
         
     }
     
@@ -114,6 +105,20 @@ class LogSessionVC: UIViewController, NSFetchedResultsControllerDelegate, UITabl
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
     
+    }
+    
+    func saveSession() {
+        // save goal data
+        var goalDataIndex = NSIndexPath(forRow: 0, inSection: 0)
+        for goal in goals {
+            let cell = self.goalTableView.cellForRowAtIndexPath(goalDataIndex) as! logSessionGoalCell
+            saveGoalData(datePicker.date,goal: goal,value: cell.goalSlider.value)
+            goalDataIndex = NSIndexPath(forRow:goalDataIndex.row+1, inSection:goalDataIndex.section)
+        }
+        // update graph view
+        NSNotificationCenter.defaultCenter().postNotificationName("updateGraphView", object: nil)
+        // dismiss view
+        self.navigationController!.popViewControllerAnimated(true)
     }
     
     func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {

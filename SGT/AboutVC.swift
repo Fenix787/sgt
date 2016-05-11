@@ -11,9 +11,4 @@ import UIKit
 
 class AboutVC: UIViewController {
     
-    @IBAction func closeButtonPressed(sender: AnyObject) {
-        self.dismissViewControllerAnimated(true, completion: {});
-    }
-    
-    
 }
